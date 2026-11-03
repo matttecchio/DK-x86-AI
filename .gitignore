@@ -1,0 +1,14 @@
+# never commit ROMs, states or traces
+roms/
+*.zip
+*.bin
+*.sta
+*.inp
+dkx/build/
+dkx/roots/
+search/st/
+search/st1k/
+search/seg/
+search/meta_*.txt
+search/*.log
+__pycache__/

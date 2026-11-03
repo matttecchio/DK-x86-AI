@@ -1,0 +1,38 @@
+--- a/src/emu/schedule.cpp
++++ b/src/emu/schedule.cpp
+@@ -9,6 +9,11 @@
+ ***************************************************************************/
+ 
+ #include "emu.h"
++#include <cstdio>
++#include <cstdlib>
++// SCHEDLOG instrumentation (Claude, for the DK native-emulator project): logs every timeslice decision when SCHEDLOG is set
++static FILE *slog_file() { static FILE *f = getenv("SCHEDLOG") ? fopen(getenv("SCHEDLOG"), "w") : nullptr; return f; }
++#define SLOG(...) do { if (FILE *f_ = slog_file()) fprintf(f_, __VA_ARGS__); } while (0)
+ #include "debugger.h"
+ 
+ //**************************************************************************
+@@ -413,6 +418,7 @@
+ 
+ 		LOG("------------------\n");
+ 		LOG("cpu_timeslice: target = %s\n", target.as_string(PRECISION));
++		SLOG("S %d %lld %d %lld\n", m_basetime.seconds(), (long long)m_basetime.attoseconds(), target.seconds(), (long long)target.attoseconds());
+ 
+ 		// do we have pending suspension changes?
+ 		if (m_suspend_changes_pending)
+@@ -484,6 +490,7 @@
+ 					assert(deltatime >= attotime::zero);
+ 					exec->m_localtime += deltatime;
+ 					LOG("         %d ran, %d total, time = %s\n", ran, s32(exec->m_totalcycles), exec->m_localtime.as_string(PRECISION));
++					SLOG("R %s %d %d %d %llu %d %lld\n", exec->device().tag(), exec->m_suspend, exec->m_cycles_running, ran, (unsigned long long)exec->m_totalcycles, exec->m_localtime.seconds(), (long long)exec->m_localtime.attoseconds());
+ 
+ 					// if the new local CPU time is less than our target, move the target up, but not before the base
+ 					if (exec->m_localtime < target)
+@@ -948,6 +955,7 @@
+ 			if (!timer.m_callback.isnull())
+ 			{
+ 				LOG("execute_timers: timer callback %s\n", timer.m_callback.name());
++				SLOG("T %s %d %d %lld\n", timer.m_callback.name() ? timer.m_callback.name() : "?", timer.m_param, timer.m_expire.seconds(), (long long)timer.m_expire.attoseconds());
+ 				timer.m_callback(timer.m_param);
+ 			}
+ 		}

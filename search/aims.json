@@ -1,0 +1,26 @@
+{
+ "aim": {
+  "1": 22500,
+  "2": 20500,
+  "3": 9000,
+  "4": 14000
+ },
+ "passes": {
+  "1": 4,
+  "2": 5,
+  "3": 2,
+  "4": 5
+ },
+ "sac_hours": 3.0,
+ "sac_hmin": 3.0,
+ "extra_hours": 2.0,
+ "extra_hmin": 0.75,
+ "extra_stall": 20,
+ "starts": {
+  "1": 2
+ },
+ "retry_floor": {
+  "from_lvl": 19,
+  "floor": 21000
+ }
+}
